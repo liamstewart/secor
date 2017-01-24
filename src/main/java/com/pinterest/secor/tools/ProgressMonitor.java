@@ -185,6 +185,7 @@ public class ProgressMonitor {
                 LOG.info("skipping topic {}", topic);
                 continue;
             }
+	    LOG.info("checking topic {}", topic);
             List<Integer> partitions = mZookeeperConnector.getCommittedOffsetPartitions(topic);
             for (Integer partition : partitions) {
                 TopicPartition topicPartition = new TopicPartition(topic, partition);

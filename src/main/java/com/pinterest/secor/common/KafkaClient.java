@@ -151,6 +151,10 @@ public class KafkaClient {
 
     public SimpleConsumer createConsumer(TopicPartition topicPartition) {
         HostAndPort leader = findLeader(topicPartition);
+	if (leader == null) {
+	    LOG.warn("no leader found for topic {} partition {}", topicPartition.getTopic(), topicPartition.getPartition());
+	    return null;
+	}
         LOG.debug("leader for topic {} partition {} is {}", topicPartition.getTopic(), topicPartition.getPartition(), leader.toString());
         final String clientName = getClientName(topicPartition);
         return createConsumer(leader.getHostText(), leader.getPort(), clientName);
@@ -204,7 +208,11 @@ public class KafkaClient {
                 return null;
             }
             consumer = createConsumer(topicPartition);
-            return getMessage(topicPartition, committedOffset, consumer);
+	    if (consumer == null) {
+		return null;
+	    } else {
+		return getMessage(topicPartition, committedOffset, consumer);
+	    }
         } finally {
             if (consumer != null) {
                 consumer.close();
