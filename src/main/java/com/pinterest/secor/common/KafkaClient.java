@@ -188,6 +188,9 @@ public class KafkaClient {
         SimpleConsumer consumer = null;
         try {
             consumer = createConsumer(topicPartition);
+	    if (consumer == null) {
+		return null;
+	    }
             long lastOffset = findLastOffset(topicPartition, consumer);
             if (lastOffset < 1) {
                 return null;
